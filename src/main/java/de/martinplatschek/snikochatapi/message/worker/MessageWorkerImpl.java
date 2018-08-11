@@ -2,8 +2,12 @@ package de.martinplatschek.snikochatapi.message.worker;
 
 import de.martinplatschek.snikochatapi.message.objects.MessageDao;
 import de.martinplatschek.snikochatapi.message.repository.MessageRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -28,7 +32,11 @@ public class MessageWorkerImpl implements MessageWorker {
     public boolean saveMessage(MessageDao msg) {
         boolean result = false;
         try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            msg.sender = user.getUsername();
+            msg.sent = new Date();
             this.repository.save(msg);
+
             result = true;
         } catch (Exception e) {
             System.out.println(e.toString());
