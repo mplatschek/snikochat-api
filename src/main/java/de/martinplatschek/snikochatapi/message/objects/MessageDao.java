@@ -1,4 +1,4 @@
-package de.martinplatschek.snikochatapi.dataobjects;
+package de.martinplatschek.snikochatapi.message.objects;
 
 import org.springframework.data.annotation.Id;
 

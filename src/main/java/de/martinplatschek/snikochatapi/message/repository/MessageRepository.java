@@ -1,12 +1,12 @@
-package de.martinplatschek.snikochatapi.repository;
+package de.martinplatschek.snikochatapi.message.repository;
 
-import de.martinplatschek.snikochatapi.dataobjects.MessageDao;
+import de.martinplatschek.snikochatapi.message.objects.MessageDao;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 
-public interface MessagesRepository extends MongoRepository<MessageDao, String> {
+public interface MessageRepository extends MongoRepository<MessageDao, String> {
     @Query("{'message': {$regex: ?0, $options: 'i'}})")
     List<MessageDao> findByMessage(String message);
 }
