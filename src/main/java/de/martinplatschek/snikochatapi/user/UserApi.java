@@ -5,10 +5,7 @@ import de.martinplatschek.snikochatapi.user.worker.UserWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -20,17 +17,26 @@ public class UserApi {
         this.userWorker = userWorker;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/create")
     public ResponseEntity<HttpStatus> setUser(@RequestBody UserDao user) {
-        return this.userWorker.addUser(user) ?
-                new ResponseEntity<>(HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(this.userWorker.addUser(user) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<HttpStatus> loginUser(@RequestBody UserDao user) {
-        return this.userWorker.loginUser(user.username, user.password) ?
-                new ResponseEntity<>(HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    @GetMapping("/login")
+    public ResponseEntity<HttpStatus> loginUser() {
+        return new ResponseEntity<>(this.userWorker.loginUser() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<HttpStatus> logoutUser() {
+        this.userWorker.logoutUser();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<HttpStatus> deleteUser() {
+        this.userWorker.deleteUser();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

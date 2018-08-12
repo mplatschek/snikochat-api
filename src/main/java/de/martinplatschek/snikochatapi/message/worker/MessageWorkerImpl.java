@@ -1,12 +1,13 @@
 package de.martinplatschek.snikochatapi.message.worker;
 
 import de.martinplatschek.snikochatapi.message.objects.MessageDao;
+import de.martinplatschek.snikochatapi.message.objects.MessageDto;
 import de.martinplatschek.snikochatapi.message.repository.MessageRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,42 +20,24 @@ public class MessageWorkerImpl implements MessageWorker {
     }
 
     @Override
-    public List<MessageDao> getAllMessages() {
-        return this.repository.findAll();
-    }
-
-    @Override
-    public List<MessageDao> getMessagesByText(String text) {
-        return this.repository.findByMessage(text);
-    }
-
-    @Override
-    public boolean saveMessage(MessageDao msg) {
-        boolean result = false;
-        try {
-            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            msg.sender = user.getUsername();
-            msg.sent = new Date();
-            this.repository.save(msg);
-
-            result = true;
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
+    public List<MessageDto> getAllMessages(String filter) {
+        List<MessageDao> resultDatabase = filter.equals("") ? this.repository.findAll() : this.repository.findByMessage(filter);
+        ArrayList<MessageDto> result = new ArrayList<>();
+        resultDatabase.forEach(dao -> result.add(new MessageDto(dao.text, dao.sender, dao.sent)));
 
         return result;
     }
 
     @Override
-    public boolean deleteAllMessages() {
-        boolean result = false;
-        try {
-            this.repository.deleteAll();
-            result = true;
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
+    public void saveMessage(MessageDto msg) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MessageDao dao = new MessageDao(user.getUsername(), new Date(), msg.text);
 
-        return result;
+        this.repository.save(dao);
+    }
+
+    @Override
+    public void deleteAllMessages() {
+        this.repository.deleteAll();
     }
 }

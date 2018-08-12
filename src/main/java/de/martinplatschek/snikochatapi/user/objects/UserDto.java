@@ -4,21 +4,16 @@ import org.springframework.data.annotation.Id;
 
 import java.util.Date;
 
-public class UserDao {
-    @Id
-    public String id;
+public class UserDto {
     public String name;
-    public String password;
     public UserRolesEnum role;
     public Date registered;
     public OnlineStatusEnum status;
 
-    public UserDao() {
-    }
+    public UserDto() { }
 
-    public UserDao(String name, String password, UserRolesEnum role, Date registered, OnlineStatusEnum status) {
+    public UserDto(String name, UserRolesEnum role, Date registered, OnlineStatusEnum status) {
         this.name = name;
-        this.password = password;
         this.role = role;
         this.registered = registered;
         this.status = status;
@@ -26,10 +21,8 @@ public class UserDao {
 
     @Override
     public String toString() {
-        return "UserDao{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
+        return "UserDto{" +
+                "name='" + name + '\'' +
                 ", role=" + role +
                 ", registered=" + registered +
                 ", status=" + status +

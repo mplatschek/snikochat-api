@@ -3,6 +3,7 @@ package de.martinplatschek.snikochatapi.message.objects;
 import org.springframework.data.annotation.Id;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class MessageDao {
     @Id
@@ -10,14 +11,15 @@ public class MessageDao {
 
     public String sender;
     public Date sent;
-    public String message;
+    public String text;
 
     public MessageDao() { }
 
-    public MessageDao(String sender, Date sent, String message) {
+    public MessageDao(String sender, Date sent, String text) {
+        this.id = UUID.randomUUID().toString();
         this.sender = sender;
         this.sent = sent;
-        this.message = message;
+        this.text = text;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class MessageDao {
                 "id='" + id + '\'' +
                 ", sender='" + sender + '\'' +
                 ", sent=" + sent +
-                ", message='" + message + '\'' +
+                ", text='" + text + '\'' +
                 '}';
     }
 }

@@ -1,6 +1,7 @@
 package de.martinplatschek.snikochatapi.message;
 
 import de.martinplatschek.snikochatapi.message.objects.MessageDao;
+import de.martinplatschek.snikochatapi.message.objects.MessageDto;
 import de.martinplatschek.snikochatapi.message.worker.MessageWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,18 +22,19 @@ public class MessageApi {
     }
 
     @PostMapping("/set")
-    public ResponseEntity<HttpStatus> setMessage(@RequestBody MessageDao message) {
-        return new ResponseEntity<>(this.messageWorker.saveMessage(message) ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<HttpStatus> setMessage(@RequestBody MessageDto message) {
+        this.messageWorker.saveMessage(message);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/get")
-    public ResponseEntity<List<MessageDao>> getMessages(@RequestParam(value="message", defaultValue = "") String msg) {
-        return new ResponseEntity<>(!msg.equals("") ? this.messageWorker.getMessagesByText(msg) : this.messageWorker.getAllMessages(), HttpStatus.OK);
+    public ResponseEntity<List<MessageDto>> getMessages(@RequestParam(value="filter", defaultValue = "") String filter) {
+        return new ResponseEntity<>(this.messageWorker.getAllMessages(filter), HttpStatus.OK);
     }
 
     @GetMapping("/delete")
-    public ResponseEntity<HttpStatus> deleteMessages(@RequestParam(value = "message", defaultValue = "") String msg) {
+    public ResponseEntity<HttpStatus> deleteMessages(@RequestParam(value = "text", defaultValue = "") String msg) {
         this.messageWorker.deleteAllMessages();
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

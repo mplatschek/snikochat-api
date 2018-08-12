@@ -1,12 +1,11 @@
 package de.martinplatschek.snikochatapi.message.worker;
 
-import de.martinplatschek.snikochatapi.message.objects.MessageDao;
+import de.martinplatschek.snikochatapi.message.objects.MessageDto;
 
 import java.util.List;
 
 public interface MessageWorker {
-    List<MessageDao> getAllMessages();
-    List<MessageDao> getMessagesByText(String text);
-    boolean saveMessage(MessageDao msg);
-    boolean deleteAllMessages();
+    List<MessageDto> getAllMessages(String filter);
+    void saveMessage(MessageDto message);
+    void deleteAllMessages();
 }
