@@ -1,9 +1,10 @@
 package de.martinplatschek.snikochatapi.config;
 
-import de.martinplatschek.snikochatapi.user.objects.UserRolesEnum;
+import de.martinplatschek.snikochatapi.user.worker.MongoUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,30 +15,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+    private MongoUserDetailsService userDetailsService;
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("user1").password(passwordEncoder().encode("pass"))
-                .authorities(UserRolesEnum.USER.name());
-        auth.inMemoryAuthentication()
-                .withUser("user2").password(passwordEncoder().encode("pass"))
-                .authorities(UserRolesEnum.USER.name());
-        auth.inMemoryAuthentication()
-                .withUser("user3").password(passwordEncoder().encode("pass"))
-                .authorities(UserRolesEnum.USER.name());
-        auth.inMemoryAuthentication()
-                .withUser("admin").password(passwordEncoder().encode("pass"))
-                .authorities(UserRolesEnum.ADMIN.name());
+    public CustomWebSecurityConfigurerAdapter(MongoUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder builder) throws Exception {
+        builder.userDetailsService(userDetailsService);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
-                .antMatchers("/api/user/create").permitAll()
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/api/user").permitAll()
                 .anyRequest().authenticated()
-                .and()
-                .httpBasic();
+                .and().httpBasic()
+                .and().sessionManagement().disable();
     }
 
     @Bean

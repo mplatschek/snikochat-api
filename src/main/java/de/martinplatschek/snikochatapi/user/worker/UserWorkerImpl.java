@@ -7,6 +7,7 @@ import de.martinplatschek.snikochatapi.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,10 +15,12 @@ import java.util.List;
 @Component
 public class UserWorkerImpl implements UserWorker {
     private UserRepository repository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserWorkerImpl(UserRepository repository) {
+    public UserWorkerImpl(UserRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -25,6 +28,7 @@ public class UserWorkerImpl implements UserWorker {
         if (this.repository.findByUsername(user.name) != null) {
             return false;
         } else {
+            user.password = passwordEncoder.encode(user.password);
             this.repository.save(user);
             return true;
         }

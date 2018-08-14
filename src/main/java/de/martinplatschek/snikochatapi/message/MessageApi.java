@@ -21,18 +21,18 @@ public class MessageApi {
         this.messageWorker = messageWorker;
     }
 
-    @PostMapping("/set")
+    @PostMapping("")
     public ResponseEntity<HttpStatus> setMessage(@RequestBody MessageDto message) {
         this.messageWorker.saveMessage(message);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/get")
+    @GetMapping("")
     public ResponseEntity<List<MessageDto>> getMessages(@RequestParam(value="filter", defaultValue = "") String filter) {
         return new ResponseEntity<>(this.messageWorker.getAllMessages(filter), HttpStatus.OK);
     }
 
-    @GetMapping("/delete")
+    @DeleteMapping("")
     public ResponseEntity<HttpStatus> deleteMessages(@RequestParam(value = "text", defaultValue = "") String msg) {
         this.messageWorker.deleteAllMessages();
         return new ResponseEntity<>(HttpStatus.OK);

@@ -17,12 +17,12 @@ public class UserApi {
         this.userWorker = userWorker;
     }
 
-    @PostMapping("/create")
+    @PostMapping("")
     public ResponseEntity<HttpStatus> setUser(@RequestBody UserDao user) {
         return new ResponseEntity<>(this.userWorker.addUser(user) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/login")
+    @GetMapping("")
     public ResponseEntity<HttpStatus> loginUser() {
         return new ResponseEntity<>(this.userWorker.loginUser() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
